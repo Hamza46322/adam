@@ -31,8 +31,11 @@ def load_excel_data(file_path):
         print(f"Error loading Excel data: {e}")
         return [], [], [], []
 
-# Example usage:
-hello_list, how_are_you_list, reply_hello_list, reply_how_are_you_list = load_excel_data('file.xlsx')
+# Example usage with specific file path
+file_path = r"C:\Users\hamza\adam\file.xlsx"  # Raw string for Windows path
+hello_list, how_are_you_list, reply_hello_list, reply_how_are_you_list = load_excel_data(file_path)
+
+
 
 # Main program loop for speech recognition
 def main():
