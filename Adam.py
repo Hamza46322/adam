@@ -5,7 +5,7 @@ import speech_recognition as sr
 import random
 import datetime
 from openpyxl import load_workbook
-from applications import open_facebook, open_instagrams, open_google, open_youtube, open_calculator, open_notepad
+import applications as ap
 
 # Initialize speech recognizer and text-to-speech engine
 recognizer = sr.Recognizer()
@@ -20,11 +20,11 @@ def load_excel_data(file_path):
         user_sheet = wb['User']
         replies_sheet = wb['Replies']
         
-        hello_list = [cell.value.lower() for cell in user_sheet['A']]
-        how_are_you_list = [cell.value.lower() for cell in user_sheet['B']]
+        hello_list = [cell.value.lower() for cell in user_sheet['A'] if cell.value]
+        how_are_you_list = [cell.value.lower() for cell in user_sheet['B'] if cell.value]
         
-        reply_hello_list = [cell.value for cell in replies_sheet['A']]
-        reply_how_are_you_list = [cell.value for cell in replies_sheet['B']]
+        reply_hello_list = [cell.value for cell in replies_sheet['A'] if cell.value]
+        reply_how_are_you_list = [cell.value for cell in replies_sheet['B'] if cell.value]
         
         return hello_list, how_are_you_list, reply_hello_list, reply_how_are_you_list
     except Exception as e:
@@ -34,8 +34,6 @@ def load_excel_data(file_path):
 # Example usage with specific file path
 file_path = r"C:\Users\hamza\adam\file.xlsx"  # Raw string for Windows path
 hello_list, how_are_you_list, reply_hello_list, reply_how_are_you_list = load_excel_data(file_path)
-
-
 
 # Main program loop for speech recognition
 def main():
@@ -51,61 +49,76 @@ def main():
             print(f"You said: {command}")
 
             if any(phrase in command for phrase in hello_list):
-                hour = datetime.datetime.now().hour
-                if 0 <= hour < 12:
-                    engine.say("Good morning!")
-                elif 12 <= hour < 18:
-                    engine.say("Good afternoon!")
-                else:
-                    engine.say("Good evening!")
-                engine.runAndWait()
-
+                greet_user()
             elif any(phrase in command for phrase in how_are_you_list):
-                engine.say(random.choice(reply_how_are_you_list))
-                engine.runAndWait()
-
+                respond_to_how_are_you()
             elif "time" in command:
-                current_time = datetime.datetime.now().strftime("%H:%M")
-                engine.say(f"The current time is {current_time}")
-                engine.runAndWait()
-
+                tell_time()
             elif "day" in command:
-                day = datetime.datetime.now().strftime("%A")
-                engine.say(f"Today is {day}")
-                engine.runAndWait()
-
+                tell_day()
             elif "open google" in command:
-                open_google()
-
+                ap.open_google()
+            elif "open discord" in command:
+                ap.open_discord()
             elif "open instagram" in command:
-                open_instagrams()    
-
+                ap.open_instagram()
             elif "open youtube" in command:
-                open_youtube()
-
+                ap.open_youtube()
             elif "open facebook" in command:
-                open_facebook()
-
+                ap.open_facebook()
             elif "open calculator" in command:
-                open_calculator()
-
+                ap.open_calculator()
             elif "open notepad" in command:
-                open_notepad()
-
+                ap.open_notepad()
+            elif "search" in command:
+                handle_search(command)
             elif "exit" in command or "quit" in command:
                 break
-
             else:
-                engine.say("Sorry, I didn't understand that.")
-                engine.runAndWait()
+                speak("Sorry, I didn't understand that.")
 
         except sr.UnknownValueError:
-            engine.say("Sorry, I couldn't understand what you said.")
-            engine.runAndWait()
+            speak("Sorry, I couldn't understand what you said.")
 
         except sr.RequestError:
-            engine.say("Sorry, I'm having trouble processing your request.")
-            engine.runAndWait()
+            speak("Sorry, I'm having trouble processing your request.")
+
+def speak(text):
+    print(f"Speaking: {text}")
+    engine.say(text)
+    engine.runAndWait()
+
+def greet_user():
+    hour = datetime.datetime.now().hour
+    if 0 <= hour < 12:
+        speak("Good morning!")
+    elif 12 <= hour < 18:
+        speak("Good afternoon!")
+    else:
+        speak("Good evening!")
+
+def respond_to_how_are_you():
+    response = random.choice(reply_how_are_you_list)
+    speak(response)
+
+def tell_time():
+    current_time = datetime.datetime.now().strftime("%H:%M")
+    response = f"The current time is {current_time}"
+    speak(response)
+    print(response)
+
+def tell_day():
+    day = datetime.datetime.now().strftime("%A")
+    response = f"Today is {day}"
+    speak(response)
+    print(response)
+
+def handle_search(command):
+    query = command.replace("search", "", 1).strip()
+    if query:
+        ap.search_web(query)
+    else:
+        speak("What would you like me to search for?")
 
 # Run the main program
 if __name__ == "__main__":
