@@ -30,6 +30,16 @@ def open_discord():
     t = threading.Thread(target=x)
     t.start()
 
+def open_mail():
+    x = lambda: webbrowser.open_new_tab('https://mail.google.com/mail/u/0/#inbox')
+    t = threading.Thread(target=x)
+    t.start()
+
+def open_whatsapp():
+    x = lambda: webbrowser.open_new_tab('https://web.whatsapp.com/')
+    t = threading.Thread(target=x)
+    t.start()
+
 # Applications
 def open_calculator():
     x = lambda: subprocess.Popen(['calc.exe'])
