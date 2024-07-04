@@ -30,6 +30,12 @@ def tell_time():
     speak(response)
     print(response)
 
+def tell_date():
+    today = datetime.datetime.now().strftime("%B %d, %Y")
+    response = f"Today's date is {today}"
+    speak(response)
+    print(response)
+
 def tell_day():
     day = datetime.datetime.now().strftime("%A")
     response = f"Today is {day}"
@@ -65,6 +71,8 @@ def main():
                 tell_time()
             elif "day" in command:
                 tell_day()
+            elif "date" in command:
+                tell_date()    
             elif "open google" in command:
                 ap.open_google()
             elif "open discord" in command:
